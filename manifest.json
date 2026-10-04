@@ -1,0 +1,28 @@
+{
+  "id": "./",
+  "name": "Mīrāth — Islamic Inheritance Calculator",
+  "short_name": "Mīrāth",
+  "description": "An Islamic inheritance calculator based on the rules of Farāʾiḍ.",
+  "lang": "ar",
+  "dir": "rtl",
+  "start_url": "./",
+  "scope": "./",
+  "display": "standalone",
+  "orientation": "any",
+  "background_color": "#f3efe6",
+  "theme_color": "#0f766e",
+  "icons": [
+    {
+      "src": "./icon-192.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "./icon-512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any"
+    }
+  ]
+}
