@@ -1,0 +1,200 @@
+<!DOCTYPE html>
+<html lang="en" dir="ltr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="theme-color" content="#EFEDE6">
+<title>Welcome to Mīrāth</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Amiri:wght@400;700&family=Cairo:wght@400;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="style.css">
+
+<!-- Storage + Redirect (runs first, so accepted visitors never see a flash of this page) -->
+<script>
+  var MIRATH_KEY = 'mirath_terms_v1';   // bump to _v2 later to show the acknowledgement again
+  var MIRATH_TARGET = 'index.html';
+  function mirathAccepted() { try { return localStorage.getItem(MIRATH_KEY) === 'accepted'; } catch (e) { return false; } }
+  if (mirathAccepted()) { document.documentElement.className = 'redirecting'; location.replace(MIRATH_TARGET); }
+</script>
+
+</head>
+<body class="entry-page">
+<noscript><p class="entry-noscript">Mīrāth needs JavaScript enabled to show its introduction and acknowledgement.</p></noscript>
+
+<main class="entry-stage" id="app">
+  <section class="entry-card glass" aria-live="polite">
+
+    <!-- PAGE 1 — Welcome -->
+    <div class="entry-step active" data-step="1" tabindex="-1">
+      <div class="entry-brand">
+        <div class="entry-logo" data-logo><img src="logo.png" alt="Mīrāth logo"><span class="entry-fallback" aria-hidden="true">✦</span></div>
+        <div class="entry-wordmark">ميراث<small>Mīrāth</small></div>
+      </div>
+      <h1 class="entry-title entry-title--lg">Welcome to Mīrāth</h1>
+      <p class="entry-tagline">Inheritance, made clearer.</p>
+      <div class="entry-rule" aria-hidden="true"></div>
+      <p class="entry-lead">Mīrāth is designed to help you understand and calculate Islamic inheritance shares through a clear and structured experience.</p>
+      <div class="entry-actions">
+        <button class="entry-button entry-button--primary" data-go="2">Continue</button>
+        <button class="entry-button entry-button--link" data-skip>Skip intro</button>
+      </div>
+    </div>
+
+    <!-- PAGE 2 — How it works -->
+    <div class="entry-step" data-step="2" tabindex="-1">
+      <h2 class="entry-title">How Mīrāth Works</h2>
+      <p class="entry-lead">Three simple steps from estate to result.</p>
+      <ol class="entry-items">
+        <li><span class="entry-num">1</span><div><b class="entry-item-title">Enter estate</b><span class="entry-item-text">Provide the estate value, debts, funeral expenses, and any will or bequest information.</span></div></li>
+        <li><span class="entry-num">2</span><div><b class="entry-item-title">Add heirs</b><span class="entry-item-text">Select the relevant heirs and enter their counts and details.</span></div></li>
+        <li><span class="entry-num">3</span><div><b class="entry-item-title">Review results</b><span class="entry-item-text">See each heir’s share, fractions, explanations, and any warnings or review notes.</span></div></li>
+      </ol>
+      <p class="entry-note">Only supported scenarios are calculated automatically. Complex or unsupported situations may show a review warning.</p>
+      <div class="entry-actions"><div class="entry-actions-row"><button class="entry-button" data-go="1">Back</button><button class="entry-button entry-button--primary" data-go="3">Continue</button></div></div>
+    </div>
+
+    <!-- PAGE 3 — Before you begin -->
+    <div class="entry-step" data-step="3" tabindex="-1">
+      <h2 class="entry-title">Before You Begin</h2>
+      <p class="entry-lead entry-lead--body">Mīrāth is a calculation assistance tool. It is not a replacement for a qualified Islamic scholar, a religious authority, or a legal professional.</p>
+      <p class="entry-lead entry-lead--body">Results depend on the information you enter, the selected calculation policy or method, and the scenarios the application supports. Some inheritance cases may require further scholarly review, so please verify important matters before acting on any result.</p>
+      <ol class="entry-items">
+        <li><span class="entry-num">1</span><div><b class="entry-item-title">Accurate information</b><span class="entry-item-text">Providing accurate information is your responsibility.</span></div></li>
+        <li><span class="entry-num">2</span><div><b class="entry-item-title">Complex cases</b><span class="entry-item-text">Complex, disputed, or unsupported cases should be reviewed by a qualified scholar or the appropriate authority.</span></div></li>
+        <li><span class="entry-num">3</span><div><b class="entry-item-title">Not a ruling</b><span class="entry-item-text">Mīrāth results are not a final fatwa or legal ruling.</span></div></li>
+      </ol>
+      <div class="entry-actions">
+        <button class="entry-button entry-button--primary" data-open-terms>Review &amp; Continue</button>
+        <button class="entry-button" data-go="2">Back</button>
+      </div>
+    </div>
+
+    <div class="entry-dots" aria-hidden="true"><i class="on"></i><i></i><i></i></div>
+  </section>
+</main>
+
+<!-- Terms & Acknowledgement modal -->
+<div class="entry-overlay" id="overlay">
+  <div class="entry-modal glass" id="modal" role="dialog" aria-modal="true" aria-labelledby="t-title" aria-describedby="t-text">
+    <div class="entry-agree-view">
+      <div class="entry-brand">
+        <div class="entry-logo" data-logo><img src="logo.png" alt="Mīrāth logo"><span class="entry-fallback" aria-hidden="true">✦</span></div>
+        <div class="entry-wordmark">ميراث<small>Mīrāth</small></div>
+      </div>
+      <h2 class="entry-title" id="t-title">Terms &amp; Acknowledgement</h2>
+      <div class="entry-terms" id="t-text" tabindex="0" role="region" aria-label="Terms text, scrollable">
+        “Mīrāth is an Islamic inheritance calculation assistance tool. It does not replace the guidance of a qualified Islamic scholar or legal professional. You understand that the results depend on the information you provide, the selected calculation policy and the scenarios supported by the application. Some cases may require further scholarly review. You agree to use the application responsibly and independently verify important inheritance matters before acting upon its results.”
+      </div>
+      <label class="entry-check"><input type="checkbox" id="agree" autocomplete="off"><span>I have read and understood the above information.</span></label>
+      <div class="entry-actions">
+        <button class="entry-button entry-button--primary" id="enter" disabled aria-disabled="true">Agree &amp; Enter</button>
+        <button class="entry-button entry-button--link" id="decline">Not Agree — Exit</button>
+      </div>
+    </div>
+
+    <div class="entry-declined" id="declined" role="alert">
+      <h2 class="entry-title">Acknowledgement needed</h2>
+      <p id="declined-msg">Mīrāth can’t be used without your acknowledgement. Nothing has been saved, and the calculator stays closed.</p>
+      <div class="entry-actions">
+        <button class="entry-button entry-button--primary" id="reconsider">Back to acknowledgement</button>
+        <button class="entry-button" id="leave">Leave this page</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+(function () {
+  'use strict';
+  var $ = function (s, r) { return (r || document).querySelector(s); };
+  var $$ = function (s, r) { return Array.prototype.slice.call((r || document).querySelectorAll(s)); };
+  var reduce = window.matchMedia && matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+  /* ---------- Storage ---------- */
+  function saveAcceptance() { try { localStorage.setItem(MIRATH_KEY, 'accepted'); return true; } catch (e) { return false; } }
+
+  /* ---------- Redirect ---------- */
+  function goToApp() { location.replace(MIRATH_TARGET); }
+  // If the page is restored from the back/forward cache after acceptance, send them on.
+  window.addEventListener('pageshow', function () { if (mirathAccepted()) goToApp(); });
+
+  /* ---------- Logo fallback ---------- */
+  $$('[data-logo] img').forEach(function (img) {
+    var box = img.parentNode;
+    function miss() { box.classList.add('nologo'); }
+    img.addEventListener('error', miss);
+    if (img.complete && img.naturalWidth === 0) miss();
+  });
+
+  /* ---------- Page Navigation ---------- */
+  var steps = $$('.entry-step'), dots = $$('.entry-dots i'), current = 1;
+  function show(n) {
+    var from = $('.entry-step.active'), to = $('[data-step="' + n + '"]');
+    if (!to || to === from) return;
+    function swap() {
+      if (from) from.classList.remove('active', 'leaving');
+      to.classList.add('active'); current = n;
+      dots.forEach(function (d, i) { d.classList.toggle('on', i === n - 1); });
+      to.focus({ preventScroll: true }); window.scrollTo(0, 0);
+    }
+    if (reduce || !from) swap(); else { from.classList.add('leaving'); setTimeout(swap, 170); }
+  }
+  $$('[data-go]').forEach(function (b) { b.addEventListener('click', function () { show(+b.dataset.go); }); });
+  // Skip intro jumps to Page 3 (disclaimer). It never bypasses the acknowledgement modal.
+  $('[data-skip]').addEventListener('click', function () { show(3); });
+
+  /* ---------- Terms Modal ---------- */
+  var overlay = $('#overlay'), modal = $('#modal'), app = $('#app'),
+      agree = $('#agree'), enter = $('#enter'), lastFocus = null;
+
+  function focusables() {
+    return $$('button, input, [tabindex="0"]', modal).filter(function (e) { return !e.disabled && e.offsetParent !== null; });
+  }
+  function openTerms() {
+    lastFocus = document.activeElement;
+    modal.classList.remove('is-declined');
+    agree.checked = false; syncButton();                   // always starts unchecked + disabled
+    overlay.classList.add('open'); app.inert = true; app.setAttribute('aria-hidden', 'true');
+    document.body.style.overflow = 'hidden';
+    $('#t-text').scrollTop = 0; $('#t-text').focus({ preventScroll: true });
+  }
+  function closeTerms() {
+    overlay.classList.remove('open'); app.inert = false; app.removeAttribute('aria-hidden');
+    document.body.style.overflow = ''; if (lastFocus) lastFocus.focus({ preventScroll: true });
+  }
+  $('[data-open-terms]').addEventListener('click', openTerms);
+
+  // keep keyboard focus inside the dialog
+  overlay.addEventListener('keydown', function (e) {
+    if (e.key !== 'Tab') return;
+    var f = focusables(); if (!f.length) return;
+    var first = f[0], last = f[f.length - 1];
+    if (e.shiftKey && document.activeElement === first) { e.preventDefault(); last.focus(); }
+    else if (!e.shiftKey && document.activeElement === last) { e.preventDefault(); first.focus(); }
+  });
+
+  /* ---------- Agreement Handling ---------- */
+  function syncButton() { enter.disabled = !agree.checked; enter.setAttribute('aria-disabled', String(!agree.checked)); }
+  agree.addEventListener('change', syncButton);
+
+  enter.addEventListener('click', function () {
+    if (!agree.checked) return;                            // guard: button state can't be bypassed
+    saveAcceptance();                                      // if storage is blocked we still proceed this once
+    goToApp();
+  });
+
+  // "Not Agree": explain honestly. Web pages can't reliably close the browser or PWA window.
+  $('#decline').addEventListener('click', function () {
+    modal.classList.add('is-declined'); $('#reconsider').focus();
+  });
+  $('#reconsider').addEventListener('click', function () {
+    modal.classList.remove('is-declined'); agree.focus();
+  });
+  $('#leave').addEventListener('click', function () {
+    if (history.length > 1) { history.back(); return; }
+    $('#declined-msg').textContent = 'There is no earlier page to return to. You can simply close this tab or window; nothing has been saved.';
+  });
+})();
+</script>
+</body>
+</html>

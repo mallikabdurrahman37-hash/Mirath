@@ -1,0 +1,493 @@
+/* ==========================================================================
+   MĪRĀTH — SHARED STYLESHEET
+   Used by index.html (calculator, MP4 video background)
+   and entry.html (onboarding, static bg.png background).
+
+   1. Design tokens (light + dark)
+   2. Base & page backgrounds (bg.png for all pages, MP4 for index only)
+   3. Liquid-glass surfaces
+   4. Main app — layout, forms, results
+   5. Main app — results clarity & responsive
+   6. Main app — advanced & explanation
+   7. Brand logo
+   8. Onboarding (entry.html) — everything prefixed .entry-
+   9. Reduced motion
+   ========================================================================== */
+
+
+/* ==========================================================================
+   1. DESIGN TOKENS
+   ========================================================================== */
+:root{
+  color-scheme:light;
+  --nav:90px;--w:640px;
+
+  /* palette — warm ivory paper, deep green ink, antique gold, soft emerald */
+  --bg1:#f3efe6;--bg2:#dfeee9;
+  --ink:#0e2b26;
+  --mute:#3f5d56;
+  --gold:#7d5c16;
+  --emerald:#0b6b63;
+  --on-accent:#ffffff;
+  --danger:#a93a27;
+
+  /* glass surfaces */
+  --glass:rgba(255,255,255,.62);
+  --glass-hi:rgba(255,255,255,.82);
+  --glass-lo:rgba(255,255,255,.46);
+  --glass-a:rgba(255,255,255,.68);        /* card gradient, start */
+  --glass-b:rgba(247,250,246,.54);        /* card gradient, end */
+  --glass-strong:rgba(255,255,255,.9);    /* toast, modal */
+  --glass-solid:rgba(250,248,242,.94);    /* fallback without backdrop-filter */
+  --edge:rgba(255,255,255,.78);
+  --shadow:rgba(20,60,50,.16);
+  --pat:rgba(15,118,110,.08);
+  --reflect:rgba(255,255,255,.34);        /* top reflection */
+  --inset-hi:rgba(255,255,255,.7);        /* inner top highlight */
+
+  /* controls */
+  --field:rgba(255,255,255,.74);          /* inputs, inset panels */
+  --line:rgba(18,48,43,.16);              /* hairlines and dividers */
+  --track:rgba(18,48,43,.1);              /* bar / segmented tracks */
+  --btn-fill:rgba(255,255,255,.8);        /* round + / − buttons */
+  --pill-on:rgba(255,255,255,.9);         /* selected tab / segment */
+  --overlay:rgba(18,48,43,.46);           /* modal backdrop */
+  --halo:0 1px 2px rgba(255,255,255,.75); /* text sitting directly on the background */
+  --r-lg:24px;--r-md:14px;--r-sm:12px;    /* radius scale */
+  --blur:18px;
+
+  /* backgrounds */
+  --bg-scrim:rgba(243,239,230,.6);        /* wash over bg.png */
+  --bg-fallback:#e9e6dc;                  /* solid colour if bg.png fails */
+  --vs-a:rgba(244,240,230,.62);           /* wash over the video (top/bottom) */
+  --vs-b:rgba(244,240,230,.46);           /* wash over the video (middle) */
+}
+:root[data-theme=dark]{
+  color-scheme:dark;
+  --bg1:#07201d;--bg2:#0c2b33;
+  --ink:#f0f8f5;
+  --mute:#b2cfc7;
+  --gold:#e6bd6f;
+  --emerald:#46c9b8;
+  --on-accent:#05201c;
+  --danger:#ff9d88;
+
+  --glass:rgba(255,255,255,.1);
+  --glass-hi:rgba(255,255,255,.18);
+  --glass-lo:rgba(255,255,255,.06);
+  --glass-a:rgba(16,50,45,.68);
+  --glass-b:rgba(8,32,30,.6);
+  --glass-strong:rgba(9,32,29,.92);
+  --glass-solid:rgba(9,32,29,.95);
+  --edge:rgba(255,255,255,.2);
+  --shadow:rgba(0,0,0,.45);
+  --pat:rgba(226,182,98,.07);
+  --reflect:rgba(255,255,255,.1);
+  --inset-hi:rgba(255,255,255,.14);
+
+  --field:rgba(3,20,18,.42);
+  --line:rgba(255,255,255,.17);
+  --track:rgba(255,255,255,.14);
+  --btn-fill:rgba(255,255,255,.12);
+  --pill-on:rgba(255,255,255,.18);
+  --overlay:rgba(0,0,0,.6);
+  --halo:0 1px 3px rgba(0,0,0,.6);
+
+  --bg-scrim:rgba(7,20,18,.55);
+  --bg-fallback:#08171a;
+  --vs-a:rgba(5,22,20,.66);
+  --vs-b:rgba(5,22,20,.5);
+}
+
+
+/* ==========================================================================
+   2. BASE & PAGE BACKGROUNDS
+   --------------------------------------------------------------------------
+   entry.html : body::before paints bg.png under a readability wash.
+                No video exists on that page, so nothing else is drawn.
+   index.html : the <video class="background-video"> is painted ABOVE
+                body::before (bg.png then only shows while the video loads, or
+                if it cannot play) and BELOW body::after (readability wash).
+
+   Stacking order (back to front):
+     html background  →  body::before (bg.png)  → .background-video
+     → body::after (video wash)  → page content  → .topbar / .tabbar (10)
+     → .toast (20)  → .entry-overlay (50)
+   ========================================================================== */
+*{box-sizing:border-box;margin:0;-webkit-tap-highlight-color:transparent}
+html{scroll-padding-top:90px;background:var(--bg-fallback);-webkit-text-size-adjust:100%;text-size-adjust:100%}
+body{font-family:Cairo,system-ui,sans-serif;color:var(--ink);background:transparent;min-height:100vh;min-height:100dvh;
+  padding:calc(env(safe-area-inset-top,0px) + 92px) clamp(12px,4vw,24px) calc(env(safe-area-inset-bottom,0px) + var(--nav) + 36px);
+  overflow-wrap:break-word;overflow-x:hidden;overflow-x:clip}
+
+/* static background (every page) */
+body::before{content:"";position:fixed;inset:0;z-index:-2;pointer-events:none;
+  background-color:var(--bg-fallback);
+  background-image:linear-gradient(var(--bg-scrim),var(--bg-scrim)),url("bg.png"),linear-gradient(160deg,var(--bg1),var(--bg2));
+  background-position:center,center,center;
+  background-size:cover,cover,cover;
+  background-repeat:no-repeat,no-repeat,no-repeat}
+
+/* MP4 background — the class exists only in index.html */
+.background-video{position:fixed;inset:0;z-index:-1;display:block;width:100%;height:100%;
+  object-fit:cover;object-position:center;border:0;outline:0;
+  background:var(--bg-fallback);pointer-events:none;user-select:none;-webkit-user-select:none}
+.background-video::-webkit-media-controls,
+.background-video::-webkit-media-controls-start-playback-button{display:none!important;-webkit-appearance:none}
+
+/* readability wash over the video — drawn only on pages that contain it */
+body:has(> .background-video)::after{content:"";position:fixed;inset:0;z-index:-1;pointer-events:none;
+  background:linear-gradient(180deg,var(--vs-a),var(--vs-b) 45%,var(--vs-b) 60%,var(--vs-a))}
+
+/* Legacy decorative layer — kept hidden so the backgrounds above stay the only ones */
+.bg{display:none}
+.bg{position:fixed;inset:0;z-index:-1;overflow:hidden}
+.orb{position:absolute;border-radius:50%;filter:blur(60px);opacity:.75}
+.o1{width:320px;height:320px;background:#2fbfa9;top:-80px;right:-60px}
+.o2{width:280px;height:280px;background:#e8c06a;bottom:10%;left:-90px}
+.o3{width:220px;height:220px;background:#6aa8e8;top:45%;right:-70px;opacity:.5}
+:root[data-theme=dark] .orb{opacity:.35}
+.pattern{position:absolute;inset:0;background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='80' height='80'%3E%3Cpath d='M40 4l9 22 22-9-9 22 22 9-22 9 9 22-22-9-9 22-9-22-22 9 9-22-22-9 22-9-9-22 22 9z' fill='none' stroke='%230f766e' stroke-width='1'/%3E%3C/svg%3E");opacity:.13}
+:root[data-theme=dark] .pattern{opacity:.09}
+
+
+/* ==========================================================================
+   3. LIQUID-GLASS SURFACES
+   Shared by app cards, bars, results, toast and onboarding cards.
+   Layers: tinted gradient fill · backdrop blur · hairline border ·
+           soft top reflection · two-step shadow.
+   ========================================================================== */
+.glass{
+  position:relative;
+  isolation:isolate;
+  background:linear-gradient(145deg,var(--glass-a),var(--glass-b));
+  -webkit-backdrop-filter:blur(var(--blur)) saturate(150%);
+  backdrop-filter:blur(var(--blur)) saturate(150%);
+  border:1px solid var(--edge);
+  border-radius:var(--r-lg);
+  box-shadow:
+    0 1px 2px rgba(0,0,0,.06),
+    0 10px 30px var(--shadow),
+    inset 0 1px 0 var(--inset-hi);
+}
+
+/* top reflection — sits BEHIND the content (negative z-index inside the
+   .glass stacking context), so it can never wash over text */
+.glass::before{
+  content:"";position:absolute;inset:0;z-index:-1;border-radius:inherit;pointer-events:none;
+  background:radial-gradient(120% 70% at 20% 0%,var(--reflect),transparent 60%);
+}
+
+/* floating pills: top bar, tab bar, round buttons, tags */
+.glass-pill{
+  color:var(--ink);
+  background:linear-gradient(145deg,var(--glass-a),var(--glass-b));
+  -webkit-backdrop-filter:blur(14px) saturate(150%);
+  backdrop-filter:blur(14px) saturate(150%);
+  border:1px solid var(--edge);
+  box-shadow:0 6px 22px var(--shadow),inset 0 1px 0 var(--inset-hi);
+}
+
+/* a pill inside a glass card needs no second blur (cheaper, looks cleaner) */
+.glass .glass-pill{
+  -webkit-backdrop-filter:none;backdrop-filter:none;
+  background:var(--btn-fill);
+  box-shadow:0 2px 8px var(--shadow),inset 0 1px 0 var(--inset-hi);
+}
+
+/* readable fallback when the browser has no backdrop blur */
+@supports not ((backdrop-filter:blur(1px)) or (-webkit-backdrop-filter:blur(1px))){
+  .glass,.glass-pill{background:var(--glass-solid)}
+  .glass .glass-pill{background:var(--btn-fill)}
+}
+
+
+/* ==========================================================================
+   4. MAIN APP — LAYOUT, FORMS, RESULTS
+   ========================================================================== */
+.topbar{position:fixed;top:calc(env(safe-area-inset-top,0px) + 2px);
+  left:max(12px,env(safe-area-inset-left));right:max(12px,env(safe-area-inset-right));
+  z-index:10;display:flex;justify-content:space-between;align-items:center;gap:10px;
+  padding:4px 18px;border-radius:26px;max-width:var(--w);margin:auto}
+.brand{display:flex;gap:12px;align-items:center;min-width:0}
+.star{font-size:26px;color:var(--gold)}
+h1{font-family:Amiri,serif;font-size:clamp(22px,6.4vw,26px);line-height:1}
+.brand p{font-size:12px;color:var(--mute)}
+.icon{flex:none;width:42px;height:42px;border-radius:50%;font-size:18px;cursor:pointer;color:var(--ink)}
+
+main{max-width:var(--w);margin:auto}
+.basmala{font-family:Amiri,serif;text-align:center;font-size:24px;color:var(--gold);margin-bottom:18px;text-shadow:var(--halo)}
+.verse{font-family:Amiri,serif;text-align:center;color:var(--ink);margin-top:26px;font-size:17px;line-height:1.9;text-shadow:var(--halo)}
+.tab{display:none;flex-direction:column;gap:14px}
+.tab.active{display:flex;animation:in .35s ease}
+@keyframes in{from{opacity:0;transform:translateY(8px)}}
+.card{padding:20px}
+h2{font-family:Amiri,serif;font-size:22px;margin-bottom:12px;color:var(--ink)}
+label{display:block;font-size:14px;font-weight:500;color:var(--mute);margin-top:12px}
+label small{opacity:.9}
+input{width:100%;min-width:0;margin-top:6px;padding:13px 16px;border-radius:var(--r-md);border:1px solid var(--line);background:var(--field);
+  color:var(--ink);font:600 17px Cairo;outline:none;text-align:right;box-shadow:inset 0 1px 4px rgba(0,0,0,.06)}
+input::placeholder{color:var(--mute);opacity:.7}
+input:focus{border-color:var(--emerald)}
+input:focus-visible,button:focus-visible{outline:2px solid var(--emerald);outline-offset:2px}
+
+.seg{display:flex;padding:4px;border-radius:var(--r-md);background:var(--track);gap:4px}
+.seg button{flex:1;min-width:0;padding:11px;border:0;border-radius:calc(var(--r-md) - 3px);background:none;font:600 16px Cairo;color:var(--mute);cursor:pointer;transition:.25s}
+.seg button.on{background:var(--pill-on);color:var(--emerald);box-shadow:0 2px 8px var(--shadow),inset 0 1px 0 var(--inset-hi)}
+
+.row{display:flex;align-items:center;justify-content:space-between;padding:12px 0;border-bottom:1px solid var(--line)}
+.row:last-child{border:0}
+.step{display:flex;align-items:center;gap:12px}
+.step button{width:42px;height:42px;border-radius:50%;font:700 20px Cairo;cursor:pointer;border:1px solid var(--edge);background:var(--btn-fill);color:var(--emerald);
+  box-shadow:0 2px 6px var(--shadow),inset 0 1px 0 var(--inset-hi)}
+.step button:active{transform:scale(.9)}
+.step output{min-width:22px;text-align:center;font-weight:700;font-size:18px;color:var(--ink)}
+
+.hero{text-align:center;padding:26px}
+.hero small{color:var(--mute)}
+.hero strong{display:block;font-family:Amiri,serif;font-size:clamp(34px,10.5vw,44px);color:var(--emerald);line-height:1.3}
+.hero span{font-size:13px;color:var(--mute)}
+#rows{display:flex;flex-direction:column;gap:12px}
+.res{padding:16px 18px;display:flex;justify-content:space-between;align-items:center;gap:10px}
+.res h3{font-size:17px;font-weight:700}
+.res p{font-size:13px;color:var(--mute)}
+.res .amt{text-align:left;direction:ltr;font-weight:700;color:var(--emerald)}
+.res .frac{display:inline-block;font-family:Amiri,serif;font-size:20px;color:var(--gold);direction:ltr}
+.bar{height:5px;border-radius:5px;background:var(--track);margin-top:8px;overflow:hidden;width:120px}
+.bar i{display:block;height:100%;background:linear-gradient(90deg,var(--emerald),var(--gold));border-radius:5px}
+.note{font-size:14px;color:var(--mute);line-height:1.9}
+.empty{text-align:center;color:var(--mute);padding:30px 10px}
+
+.tabbar{position:fixed;bottom:calc(env(safe-area-inset-bottom,0px) + 12px);left:0;right:0;margin:auto;width:min(320px,calc(100% - 32px));z-index:10;display:flex;padding:4px;border-radius:24px;gap:4px}
+.tabbar button{flex:1;min-width:0;display:flex;flex-direction:column;align-items:center;gap:2px;padding:5px 0;border:0;border-radius:20px;background:none;color:var(--mute);font:600 11px Cairo;cursor:pointer;transition:.3s;position:relative;z-index:1}
+.tabbar b{font-size:18px}
+.tabbar button.on{color:var(--emerald);background:var(--pill-on);box-shadow:0 3px 12px var(--shadow),inset 0 1px 0 var(--inset-hi)}
+
+
+/* ==========================================================================
+   5. MAIN APP — RESULT CLARITY, RESPONSIVE, VERSE
+   ========================================================================== */
+@media(min-width:900px){:root{--w:720px}}
+@media(min-width:1400px){:root{--w:780px}}
+@media(min-width:768px){.card{padding:24px}}
+.verse{overflow-wrap:anywhere;text-wrap:balance;padding:0 6px;margin:26px 0 6px;font-size:clamp(15px,4.2vw,18px)}
+.row span{flex:1;min-width:0;padding-inline-end:10px;line-height:1.6;overflow-wrap:anywhere}
+.step{flex:none}
+.sub{font-size:13px;color:var(--gold);margin:14px 0 0;font-weight:700}
+.reset{margin-top:16px;width:100%;padding:11px;border-radius:var(--r-md);font:600 15px Cairo;cursor:pointer;color:var(--mute)}
+.reset.armed{color:var(--danger);border-color:var(--danger)}
+.hd{margin:6px 4px 0;text-shadow:var(--halo)}
+.flow{display:flex;flex-direction:column;align-items:stretch;gap:2px;padding:16px 20px}
+.fl{display:flex;justify-content:space-between;gap:10px;font-size:15px;color:var(--mute)}
+.fl b{color:var(--ink);direction:ltr}
+.fl.last{color:var(--emerald);font-weight:700;border-top:1px solid var(--line);padding-top:8px;margin-top:2px}
+.fl.last b{color:var(--emerald)}
+.ar{text-align:center;font-style:normal;color:var(--gold);font-size:13px;line-height:1.2}
+.warn{font-size:14px;line-height:1.9;color:var(--ink);padding:14px 18px}
+.res{flex-direction:column;align-items:stretch;gap:6px}
+.rh,.rb{display:flex;justify-content:space-between;gap:10px}
+.rh{align-items:center}
+.rb{align-items:flex-end}
+.rh h3{min-width:0;overflow-wrap:anywhere;line-height:1.5}
+.cnt{font-size:14px;color:var(--mute);font-weight:600}
+.tag{flex:none;font-size:12px;font-weight:700;padding:2px 12px;border-radius:99px;border:1px solid var(--edge);background:var(--btn-fill)}
+.tag.fard{color:var(--emerald)}
+.tag.asaba,.tag.both{color:var(--gold)}
+.tag.no{color:var(--mute)}
+.res b{color:var(--ink)}
+.res.blk{opacity:.9}
+.res.blk h3{color:var(--mute)}
+.nums{flex:none;text-align:left;max-width:52%;overflow-wrap:anywhere}
+.frac small{display:block;font:600 11px Cairo;color:var(--mute);line-height:1.4}
+.bar{width:100%;max-width:260px}
+.toast{position:fixed;left:50%;bottom:calc(env(safe-area-inset-bottom,0px) + var(--nav) + 18px);transform:translate(-50%,10px);z-index:20;width:max-content;max-width:calc(100% - 32px);
+  padding:10px 18px;border-radius:20px;font-size:14px;color:var(--ink);background:var(--glass-strong);opacity:0;pointer-events:none;transition:.3s}
+.toast.show{opacity:1;transform:translate(-50%,0)}
+@media(max-width:360px){
+  .card{padding:16px}.res{padding:14px}.basmala{font-size:21px}
+  .topbar{padding:4px 14px}
+  .step{gap:8px}
+}
+@media(max-height:500px){
+  :root{--nav:64px}
+  body{padding-top:calc(env(safe-area-inset-top,0px) + 74px)}
+  .topbar{padding:6px 16px}
+  .basmala{margin-bottom:10px}
+  .tabbar button{flex-direction:row;justify-content:center;gap:6px;padding:5px 0}
+}
+
+
+/* ==========================================================================
+   6. MAIN APP — ADVANCED OPTIONS & EXPLANATION
+   ========================================================================== */
+select{width:100%;min-width:0;margin-top:6px;padding:12px 14px;border-radius:var(--r-md);border:1px solid var(--line);background:var(--field);color:var(--ink);font:600 15px Cairo}
+select:focus{border-color:var(--emerald)}
+select option{color:var(--ink);background:var(--bg1)}
+.adv{margin-top:14px;border-top:1px solid var(--line);padding-top:8px}
+.adv summary,.why summary{cursor:pointer;font-size:13px;font-weight:700;color:var(--gold);padding:6px 0}
+.why ul{margin:4px 18px 4px 0;font-size:13px;color:var(--mute);line-height:1.8}
+
+
+/* ==========================================================================
+   7. MĪRĀTH BRAND LOGO
+   ========================================================================== */
+.brand-logo{width:44px;height:44px;object-fit:contain;flex:none}
+
+
+/* ==========================================================================
+   8. ONBOARDING (entry.html)
+   --------------------------------------------------------------------------
+   Every selector below starts with .entry- (or .entry-page) so it cannot
+   touch the calculator. Colours, glass and radii come from the shared tokens;
+   the background stays the static bg.png from section 2.
+   ========================================================================== */
+.entry-page{
+  --entry-num:28px;
+  padding:0;min-height:100vh;min-height:100dvh;overflow-x:hidden;line-height:1.7;
+}
+html.redirecting .entry-page{visibility:hidden}
+.entry-page main{max-width:none;margin:0}
+
+/* page frame */
+.entry-stage{
+  min-height:100vh;min-height:100dvh;display:flex;align-items:center;justify-content:center;
+  padding:max(20px,env(safe-area-inset-top)) max(16px,env(safe-area-inset-right)) max(20px,env(safe-area-inset-bottom)) max(16px,env(safe-area-inset-left));
+}
+.entry-card{width:100%;max-width:520px;padding:clamp(20px,5vw,32px)}
+.entry-noscript{padding:24px;text-align:center}
+
+/* brand block */
+.entry-brand{display:flex;flex-direction:column;align-items:center;gap:6px;margin-bottom:16px;text-align:center}
+.entry-logo{width:64px;height:64px;border-radius:50%;display:grid;place-items:center;background:var(--field);border:1px solid var(--line);overflow:hidden}
+.entry-logo img{width:100%;height:100%;object-fit:contain;display:block}
+.entry-logo .entry-fallback{display:none;font-size:28px;color:var(--gold)}
+.entry-logo.nologo img{display:none}
+.entry-logo.nologo .entry-fallback{display:block}
+.entry-wordmark{font-family:Amiri,serif;font-size:22px;color:var(--emerald);line-height:1.2}
+.entry-wordmark small{display:block;font-family:Cairo,sans-serif;font-size:12px;color:var(--gold);letter-spacing:.12em}
+
+/* steps (state classes active / leaving are toggled by the page script) */
+.entry-step{display:none}
+.entry-step.active{display:block;animation:entry-rise .35s ease both}
+.entry-step.leaving{animation:entry-fall .17s ease both}
+.entry-step:focus-visible{outline:none}
+@keyframes entry-rise{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:none}}
+@keyframes entry-fall{to{opacity:0;transform:translateY(-6px)}}
+
+/* typography */
+.entry-title{font-family:Amiri,serif;color:var(--ink);font-weight:700;line-height:1.25;text-align:center;margin:0;font-size:clamp(24px,6vw,30px)}
+.entry-title--lg{font-size:clamp(28px,7.5vw,38px)}
+.entry-tagline{text-align:center;color:var(--gold);font-weight:600;margin:6px 0 0;font-size:clamp(15px,4vw,17px)}
+.entry-lead{text-align:center;color:var(--mute);font-size:clamp(15px,3.8vw,16px);line-height:1.7;margin:10px auto 0;max-width:46ch}
+.entry-lead--body{text-align:start;max-width:none}
+.entry-lead + .entry-lead{margin-top:8px}
+.entry-rule{height:1px;background:linear-gradient(90deg,transparent,var(--gold),transparent);opacity:.5;margin:16px auto 0;width:56%}
+
+/* numbered lists */
+.entry-items{list-style:none;padding:0;margin:18px 0 0;display:grid;gap:10px}
+.entry-items li{
+  display:grid;grid-template-columns:var(--entry-num) minmax(0,1fr);column-gap:14px;align-items:start;
+  padding:12px 14px;border:1px solid var(--line);border-radius:var(--r-md);background:var(--field);
+}
+.entry-num{
+  width:var(--entry-num);height:var(--entry-num);border-radius:50%;
+  display:flex;align-items:center;justify-content:center;padding:0;
+  background:var(--emerald);color:var(--on-accent);
+  font:700 14px/1 system-ui,-apple-system,"Segoe UI",Roboto,"Helvetica Neue",Arial,sans-serif;
+  font-variant-numeric:lining-nums tabular-nums;
+}
+@supports (text-box:trim-both cap alphabetic){.entry-num{text-box:trim-both cap alphabetic}}
+.entry-item-title{display:block;color:var(--ink);font-size:16px;font-weight:700;line-height:var(--entry-num)}
+.entry-item-text{display:block;color:var(--mute);font-size:14.5px;line-height:1.55;overflow-wrap:anywhere}
+.entry-note{margin-top:14px;padding:12px 16px;border-inline-start:3px solid var(--gold);background:var(--field);border-radius:var(--r-sm);font-size:14.5px;line-height:1.65;color:var(--ink)}
+
+/* buttons */
+.entry-actions{display:flex;flex-direction:column;gap:10px;margin-top:22px}
+.entry-actions-row{display:flex;gap:10px}
+.entry-actions-row .entry-button{flex:1}
+.entry-button{
+  appearance:none;-webkit-appearance:none;display:inline-flex;align-items:center;justify-content:center;text-align:center;
+  font:600 16px/1.2 Cairo,system-ui,sans-serif;min-height:48px;padding:10px 20px;border-radius:var(--r-md);cursor:pointer;
+  border:1px solid var(--line);background:var(--field);color:var(--emerald);
+  transition:background-color .2s,transform .15s,opacity .2s;
+}
+.entry-button:active{transform:scale(.985)}
+.entry-button--primary{background:var(--emerald);border-color:var(--emerald);color:var(--on-accent)}
+.entry-button--link{border-color:transparent;background:none;color:var(--mute);text-decoration:underline;text-underline-offset:4px;font-size:15px}
+.entry-button:disabled{opacity:.45;cursor:not-allowed;transform:none}
+@media (hover:hover){
+  .entry-button:not(:disabled):hover{background:var(--glass-hi)}
+  .entry-button--primary:not(:disabled):hover{background:var(--emerald);filter:brightness(1.08)}
+  .entry-button--link:not(:disabled):hover{background:none;color:var(--ink)}
+}
+
+/* progress dots */
+.entry-dots{display:flex;justify-content:center;gap:8px;margin-top:20px}
+.entry-dots i{display:block;width:8px;height:8px;border-radius:99px;background:var(--line);transition:background-color .3s,width .3s}
+.entry-dots i.on{background:var(--gold);width:22px}
+
+/* terms & acknowledgement dialog (state class open / is-declined set by script) */
+.entry-overlay{
+  position:fixed;inset:0;z-index:50;display:none;align-items:center;justify-content:center;
+  padding:max(14px,env(safe-area-inset-top)) max(14px,env(safe-area-inset-right)) max(14px,env(safe-area-inset-bottom)) max(14px,env(safe-area-inset-left));
+  background:var(--overlay);-webkit-backdrop-filter:blur(3px);backdrop-filter:blur(3px);
+}
+.entry-overlay.open{display:flex;animation:entry-fade .25s ease both}
+.entry-modal{
+  width:100%;max-width:500px;max-height:calc(100vh - 28px);max-height:calc(100dvh - 28px);
+  padding:clamp(18px,4.5vw,28px);overflow-y:auto;overscroll-behavior:contain;animation:entry-pop .3s ease both;
+}
+/* dialogs are more opaque than cards so long text stays easy to read */
+.entry-modal.glass{background:var(--glass-strong)}
+.entry-modal .entry-brand{margin-bottom:8px}
+.entry-modal .entry-logo{width:48px;height:48px}
+.entry-modal .entry-title{font-size:clamp(22px,5.5vw,28px)}
+@keyframes entry-fade{from{opacity:0}to{opacity:1}}
+@keyframes entry-pop{from{opacity:0;transform:translateY(10px) scale(.98)}to{opacity:1;transform:none}}
+.entry-terms{
+  margin-top:14px;padding:14px 16px;border:1px solid var(--line);border-radius:var(--r-md);background:var(--field);
+  font-size:15px;line-height:1.7;color:var(--ink);overflow-y:auto;max-height:min(34vh,260px);min-height:90px;
+}
+.entry-terms:focus-visible{outline:2px solid var(--emerald);outline-offset:2px}
+.entry-check{display:flex;gap:12px;align-items:flex-start;margin-top:14px;min-height:48px;padding:8px 4px;cursor:pointer;font-size:15.5px;font-weight:600;color:var(--ink)}
+.entry-check span{line-height:24px}
+.entry-check input{
+  flex:none;width:24px;height:24px;margin:0;padding:0;border-radius:0;background:none;box-shadow:none;text-align:start;
+  accent-color:var(--emerald);cursor:pointer;
+}
+.entry-declined{display:none;text-align:center}
+.entry-declined p{color:var(--mute);margin-top:12px;line-height:1.7}
+.entry-modal.is-declined .entry-agree-view{display:none}
+.entry-modal.is-declined .entry-declined{display:block}
+
+/* onboarding responsive */
+@media (max-width:359px){
+  .entry-actions-row{flex-direction:column}
+  .entry-items li{padding:10px 12px;column-gap:12px}
+  .entry-card{padding:18px}
+}
+@media (min-width:560px){
+  .entry-actions--split{flex-direction:row-reverse}
+  .entry-actions--split .entry-button{flex:1}
+}
+@media (max-height:700px){
+  .entry-modal .entry-logo{display:none}
+  .entry-modal .entry-brand{margin-bottom:4px}
+  .entry-terms{max-height:min(30vh,220px)}
+}
+@media (max-height:520px){
+  .entry-stage{align-items:flex-start}
+  .entry-terms{max-height:30vh}
+}
+
+
+/* ==========================================================================
+   9. REDUCED MOTION
+   The video is hidden (and its wash removed); the page falls back to the
+   static bg.png layer from section 2. All animations and transitions stop.
+   ========================================================================== */
+@media(prefers-reduced-motion:reduce){
+  *{animation:none!important;transition:none!important}
+  .background-video{display:none}
+  body:has(> .background-video)::after{display:none}
+}
